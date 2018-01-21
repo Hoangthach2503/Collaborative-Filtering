@@ -1,5 +1,5 @@
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import numpy as np 
+import pandas as pd
 from sklearn.metrics import roc_auc_score
 from sklearn.linear_model import LogisticRegression
 from collections import defaultdict
@@ -20,6 +20,9 @@ df_train = df_train.drop_duplicates(['ncodpers'], keep='last')
 
 df_train.fillna(0, inplace=True)
 
+
+#running a LogisticRegression classifier to predict each product from the existing products a user has, 
+#essentially expressing each product as a linear combination of the other products. 
 models = {}
 model_preds = {}
 id_preds = defaultdict(list)
@@ -41,13 +44,15 @@ for c in df_train.columns:
             
         print(roc_auc_score(y_train, p_train))
         
+#Products that the User already have             
 already_active = {}
 for row in df_train.values:
     row = list(row)
     id = row.pop(0)
     active = [c[0] for c in zip(df_train.columns[1:], row) if c[1] > 0]
     already_active[id] = active
-    
+
+#Predicting the products that Users don't have based on probability obtained
 train_preds = {}
 for id, p in id_preds.items():
     # Here be dragons
